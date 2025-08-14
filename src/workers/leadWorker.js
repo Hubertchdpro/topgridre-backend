@@ -1,7 +1,9 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { prisma } from '../prismaClient.js';
-const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
+const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
+  maxRetriesPerRequest: null
+});
 const worker = new Worker('leadQueue', async job => {
   if (job.name === 'new-lead') {
     const { leadId } = job.data;
