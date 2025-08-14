@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("client")
+  createdAt DateTime @default(now())
+}
+
+model ExpertProfile {
+  id                 String   @id @default(uuid())
+  userId             String?
+  displayName        String
+  title              String
+  public             Boolean  @default(true)
+  hourlyRateCents    Int
+  yearsExperience    Int
+  coreStandards      String[] @default([])
+  resumeText         String?
+  createdAt          DateTime @default(now())
+}
+
+model News {
+  id          String   @id @default(uuid())
+  title       String
+  summary     String?
+  body        String?
+  tags        String[] @default([])
+  publishDate DateTime @default(now())
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String?
+  company   String?
+  payload   Json
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
