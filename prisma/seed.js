@@ -1,35 +1,73 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+
+const prisma = new PrismaClient()
+
 async function main() {
-  await prisma.expertProfile.createMany({
+  // Utilisateurs
+  const user1 = await prisma.user.create({
+    data: {
+      email: "client1@example.com",
+      name: "Alice Dupont",
+      role: "client"
+    }
+  })
+
+  const expertUser = await prisma.user.create({
+    data: {
+      email: "expert1@example.com",
+      name: "Dr. John Doe",
+      role: "expert"
+    }
+  })
+
+  // Profil Expert
+  await prisma.expertProfile.create({
+    data: {
+      userId: expertUser.id,
+      displayName: "John Doe",
+      title: "Consultant en cybersécurité",
+      hourlyRateCents: 15000,
+      yearsExperience: 8,
+      coreStandards: ["ISO27001", "GDPR", "CIS"],
+      resumeText: "Expert en cybersécurité avec plus de 8 ans d'expérience."
+    }
+  })
+
+  // Actualités
+  await prisma.news.createMany({
     data: [
       {
-        displayName: 'Expert_GridOps_1123',
-        title: 'NERC CIP Specialist',
-        public: false,
-        hourlyRateCents: 20000,
-        yearsExperience: 12,
-        coreStandards: ['CIP-007','CIP-005'],
-        resumeText: null
+        title: "Lancement de la nouvelle plateforme",
+        summary: "Nous annonçons le lancement de notre nouvelle plateforme...",
+        body: "Texte détaillé de l’annonce...",
+        tags: ["tech", "startup"]
       },
       {
-        displayName: 'Jane Doe',
-        title: 'O&P Lead',
-        public: true,
-        hourlyRateCents: 15000,
-        yearsExperience: 8,
-        coreStandards: ['PRC-005','TOP-001'],
-        resumeText: 'Senior O&P engineer…'
+        title: "Mise à jour de sécurité",
+        summary: "Une nouvelle mise à jour de sécurité a été publiée...",
+        body: "Détails techniques de la mise à jour...",
+        tags: ["sécurité", "update"]
       }
     ]
-  });
-  await prisma.news.create({
+  })
+
+  // Leads
+  await prisma.lead.create({
     data: {
-      title: 'NERC issues example update',
-      summary: 'Example summary',
-      body: '<p>Details...</p>',
-      tags: ['CIP']
+      name: "Société X",
+      email: "contact@societex.com",
+      company: "Société X",
+      payload: { interest: "audit cybersécurité" },
+      status: "new"
     }
-  });
+  })
 }
-main().catch(e=>{console.error(e);process.exit(1)}).finally(()=>process.exit(0));
+
+main()
+  .then(async () => {
+    await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await prisma.$disconnect()
+    process.exit(1)
+  })
