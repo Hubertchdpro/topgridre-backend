@@ -7,3 +7,10 @@
 5. `npm run prisma:migrate`
 6. `npm run seed`
 7. `npm run dev`
+
+
+
+# installation in Render
+1. Build Command: npm install && npx prisma generate && npx prisma migrate deploy && npm run seed && npm run dev
+2. Start Command: node start
+3. Set env variables according to the env.example file
