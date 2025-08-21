@@ -8,7 +8,7 @@ import leadRoutes from './routes/lead.js';
 import './workers/leadWorker.js';
 dotenv.config();
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL || 'https://topgridre-frontend-r9s9.vercel.app' }));
+app.use(cors({ origin: process.env.FRONTEND_URL || 'https://topgridre-frontend-r9s9.vercel.app/' }));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api/public', publicRoutes);
