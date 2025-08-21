@@ -10,7 +10,6 @@ dotenv.config();
 const app = express();
 app.use(cors({ 
   origin: [
-    'http://localhost:3000',
     'https://topgridre-frontend-r9s9.vercel.app',
     process.env.FRONTEND_URL
   ].filter(Boolean)

@@ -1,22 +1,28 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String          @id @default(uuid())
+  email     String          @unique
   name      String?
-  role      String   @default("client")
-  createdAt DateTime @default(now())
+  role      String          @default("client")
+  createdAt DateTime        @default(now())
+
+  // ✅ Relations
+  expertProfile ExpertProfile?
+  leads         Lead[]
 }
 
 model ExpertProfile {
   id                 String   @id @default(uuid())
-  userId             String?
+  userId             String?  @unique
+  user               User?    @relation(fields: [userId], references: [id])
   displayName        String
   title              String
   public             Boolean  @default(true)
@@ -44,4 +50,8 @@ model Lead {
   payload   Json
   status    String   @default("new")
   createdAt DateTime @default(now())
+
+  // ✅ Relation to User (optional)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
 }
