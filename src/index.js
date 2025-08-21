@@ -12,13 +12,11 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Liste des origines autorisées (frontend déployé + localhost)
 const allowedOrigins = [
   process.env.FRONTEND_URL || "https://topgridre-frontend-r9s9.vercel.app",
   "http://localhost:3000"
 ];
 
-// ✅ Config CORS
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -30,15 +28,26 @@ app.use(cors({
   credentials: true
 }));
 
+// ✅ Important pour OPTIONS
+app.options('*', cors());
+
+// ✅ Headers fallback
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL || "https://topgridre-frontend-r9s9.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use(express.json());
 app.use(morgan('dev'));
 
-// ✅ Routes
+// Routes
 app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/leads', leadRoutes);
 
-// ✅ Route test
 app.get('/', (req,res) => res.send('Top GridRE API running ✅'));
 
 const port = process.env.PORT || 5000;
